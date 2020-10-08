@@ -111,7 +111,7 @@ public class Condition {
   public static String[] getMatchRelationshipOptions(String inputString) {
     switch (inputString) {
       case "Domain Name":
-        return new String[]{"Matches", "Does Not Match"};
+        return new String[]{"Matches", "Contains", "Does Not Match"};
       case "IP Address":
         return new String[]{"Is In Range", "Is Not In Range"};
       case "Protocol":
@@ -292,6 +292,8 @@ public class Condition {
     switch (this.matchRelationship) {
       case "Matches":
         return messageInfo.getHttpService().getHost().equals(this.matchCondition);
+      case "Contains":
+        return messageInfo.getHttpService().getHost().contains(this.matchCondition);
       default:
         return !messageInfo.getHttpService().getHost().equals(this.matchCondition);
     }
@@ -331,7 +333,7 @@ public class Condition {
 
   private boolean checkFileExtension(IHttpRequestResponse messageInfo) {
     IRequestInfo analyzedRequest = BurpExtender.getHelpers().analyzeRequest(messageInfo);
-    String fileExtension = Files.getFileExtension(analyzedRequest.getUrl().toString());
+    String fileExtension = Files.getFileExtension(analyzedRequest.getUrl().getPath().toString());
     switch (this.matchRelationship) {
       case "Matches":
         return fileExtension.matches(this.matchCondition);
